@@ -10,4 +10,5 @@ chromadb
 groq
 langchain
 langchain-community
+langchain-chroma
 httpx
