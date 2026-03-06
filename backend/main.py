@@ -4,6 +4,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.routes.legal_routes import router as legal_router
 import logging
+import os
+
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
