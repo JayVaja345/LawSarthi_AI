@@ -5,18 +5,30 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.routes.legal_routes import router as legal_router
 import logging
 import os
+import sys
 
-
-# Setup logging
-logging.basicConfig(level=logging.INFO)
+# Setup detailed logging
+logging.basicConfig(
+    level=logging.DEBUG,  # Change to DEBUG for more details
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(sys.stdout),  # Force output to stdout
+        logging.FileHandler('app.log')
+    ]
+)
 logger = logging.getLogger(__name__)
 
-# def run(user_input:str):
-#     result = legal_assistant_crew.kickoff(inputs={"user_input": user_input})
-    
-#     print("-"*50)
-#     print(result)
-#     print("-" * 50)
+# Log startup information IMMEDIATELY
+logger.info("=" * 50)
+logger.info("🚀 STARTING AI LEGAL ASSISTANT API")
+logger.info("=" * 50)
+logger.info(f"Python version: {sys.version}")
+logger.info(f"Current directory: {os.getcwd()}")
+logger.info(f"Files in current dir: {os.listdir('.')}")
+
+# Check environment variables
+port_from_env = os.environ.get("PORT")
+logger.info(f"PORT environment variable: {port_from_env}")
 
 # Create FastAPI app
 app = FastAPI(
@@ -35,10 +47,13 @@ app.add_middleware(
 )
 
 # Include routers
+logger.info("📡 Including routers...")
 app.include_router(legal_router)
+logger.info("✅ Routers included")
 
 @app.get("/")
 async def root():
+    logger.debug("Root endpoint accessed")
     return {
         "message": "Welcome to AI Legal Assistant API",
         "version": "1.0.0",
@@ -48,16 +63,18 @@ async def root():
         }
     }
 
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy", "service": "legal-assistant"}
 
-if __name__ == "__main__":
-    import uvicorn
-    port = int(os.environ.get("PORT", 8000))
-    uvicorn.run(app, host="0.0.0.0", port=port)    
+@app.on_event("startup")
+async def startup_event():
+    logger.info("=" * 50)
+    logger.info("✅ APPLICATION STARTUP COMPLETE")
+    logger.info(f"📡 Binding to host: 0.0.0.0")
+    logger.info(f"🔌 Using port from env: {os.environ.get('PORT', 'Not set')}")
+    logger.info("=" * 50)
 
-# @app.on_event("startup")
-# async def startup_event():
-#     logger.info("🚀 Legal Assistant API starting up...")
-
-# @app.on_event("shutdown")
-# async def shutdown_event():
-#     logger.info("👋 Legal Assistant API shutting down...")
+@app.on_event("shutdown")
+async def shutdown_event():
+    logger.info("👋 Application shutting down...")
