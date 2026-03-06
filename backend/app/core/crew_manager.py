@@ -41,7 +41,9 @@ class LegalCrewManager:
                 legal_drafter_task
             ],
             process=Process.sequential,
-            verbose=True
+            verbose=False,      # ← change True to False (saves memory)
+            memory=False,       # ← disable memory
+            cache=False
         )
     
     def process_query(self, user_input: str, document_text: str = None) -> dict:
