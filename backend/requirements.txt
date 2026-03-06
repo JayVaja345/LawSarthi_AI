@@ -7,8 +7,12 @@ python-dotenv
 pydantic
 pydantic-settings
 chromadb
+torch
 groq
 langchain
 langchain-community
 langchain-chroma
+langchain_huggingface
+sentence-transformers
+tenacity
 httpx
